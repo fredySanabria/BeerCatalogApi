@@ -23,12 +23,18 @@ public class ManufacturerRepositoryAdapter implements IManufacturerCRUDRepositor
 
 
     @Override
-    public Manufacturer createOrUpdateManufacturer(Manufacturer beerManufacturer) {
+    public Manufacturer createManufacturer(Manufacturer beerManufacturer) {
         ManufacturerEntity entity = ManufacturerMapper.toEntity(beerManufacturer);
         repository.save(entity);
         return ManufacturerMapper.toDomain(entity);
     }
 
+    @Override
+    public Manufacturer updateManufacturer(Manufacturer beerManufacturer) {
+        ManufacturerEntity entity = ManufacturerMapper.toEntity(beerManufacturer);
+        repository.save(entity);
+        return ManufacturerMapper.toDomain(entity);
+    }
 
     @Override
     public void deleteManufacturer(Manufacturer beerManufacturer) {

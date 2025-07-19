@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IManufacturerCRUDRepository {
-    Manufacturer createOrUpdateManufacturer(Manufacturer beerManufacturer);
+    Manufacturer createManufacturer(Manufacturer beerManufacturer);
+    Manufacturer updateManufacturer(Manufacturer beerManufacturer);
     void deleteManufacturer(Manufacturer beerManufacturer);
     List<Manufacturer> getAllManufacturers();
     Optional<Manufacturer> getManufacturer(Long id);

@@ -1,8 +1,8 @@
 
-INSERT INTO Manufacturer (id,name,country) VALUES (1,'Carlsberg & Heineken group', 'Belgium');
-INSERT INTO Manufacturer (id,name,country) VALUES (2,'Anheuser-Busch InBev', 'Mexico');
-INSERT INTO Manufacturer (id,name,country) VALUES (3,'Erdinger Weißbräu', 'Germany');
-INSERT INTO Manufacturer (id,name,country) VALUES (4,'Moritz', 'España');
+INSERT INTO Manufacturer (name,country) VALUES ('Carlsberg & Heineken group', 'Belgium');
+INSERT INTO Manufacturer (name,country) VALUES ('Anheuser-Busch InBev', 'Mexico');
+INSERT INTO Manufacturer (name,country) VALUES ('Erdinger Weißbräu', 'Germany');
+INSERT INTO Manufacturer (name,country) VALUES ('Moritz', 'España');
 
 CREATE TABLE Beer (id IDENTITY NOT NULL PRIMARY KEY,name VARCHAR(30),ABV DECIMAL(4,2),type VARCHAR(20), description TEXT, manufacturer_id INT,
 CONSTRAINT FK_ManufacturerBeer FOREIGN KEY (manufacturer_id) REFERENCES Manufacturer(id));

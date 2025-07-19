@@ -20,8 +20,13 @@ public class ManufacturerService implements IManufacturerUseCases {
     }
 
     @Override
-    public Manufacturer createOrUpdateManufacturer(Long id, String name, String country) {
-        return persistenceAdapter.createOrUpdateManufacturer(new Manufacturer(id, name, country));
+    public Manufacturer createManufacturer(String name, String country) {
+        return persistenceAdapter.createManufacturer(new Manufacturer(null,name, country));
+    }
+
+    @Override
+    public Manufacturer updateManufacturer(Long id, String name, String country) {
+        return persistenceAdapter.updateManufacturer(new Manufacturer(id, name, country));
     }
 
     @Override
