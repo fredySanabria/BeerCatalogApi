@@ -8,10 +8,11 @@ import beer.catalog.api.infrastructure.web.mapper.ManufacturerMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/api/manufacturers")
@@ -40,4 +41,23 @@ public class ManufacturerWebController {
                 .toList();
         return ResponseEntity.ok(manufacturersList);
     }
+
+    @PutMapping
+    public ResponseEntity<ManufacturerDTO> updateManufacturer(@PathVariable Long id,@RequestBody ManufacturerDTO updateManufacturer){
+        Manufacturer existingManufacturer = service.getManufacturer(id);
+        if(Objects.equals(existingManufacturer.id(), updateManufacturer.id())){
+            Manufacturer updatedManufacturer = service.createOrUpdateManufacturer(updateManufacturer.id(), updateManufacturer.name(), updateManufacturer.country());
+            return ResponseEntity.ok(ManufacturerMapper.toDto(updatedManufacturer));
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Manufacturer id is different from existing in the body");
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteManufacturer (@PathVariable Long id) {
+        service.deleteManufacturer(id);
+        return ResponseEntity.noContent().build();
+    }
 }
+
