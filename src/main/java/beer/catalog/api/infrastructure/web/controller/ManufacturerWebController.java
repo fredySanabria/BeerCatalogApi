@@ -44,8 +44,7 @@ public class ManufacturerWebController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ManufacturerDTO> updateManufacturer(@PathVariable Long id,@RequestBody ManufacturerDTO updateManufacturer){
-        Manufacturer existingManufacturer = service.getManufacturer(id);
-        if(Objects.equals(existingManufacturer.id(), updateManufacturer.id())){
+        if(Objects.equals(id, updateManufacturer.id())){
             Manufacturer updatedManufacturer = service.updateManufacturer(updateManufacturer.id(), updateManufacturer.name(), updateManufacturer.country());
             return ResponseEntity.ok(ManufacturerMapper.toDto(updatedManufacturer));
         } else {
@@ -56,8 +55,7 @@ public class ManufacturerWebController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteManufacturer (@PathVariable Long id) {
-        Manufacturer existingManufacturer = service.getManufacturer(id);
-        service.deleteManufacturer(existingManufacturer.id());
+        service.deleteManufacturer(id);
         return ResponseEntity.noContent().build();
     }
 }

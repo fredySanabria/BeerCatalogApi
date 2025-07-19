@@ -1,11 +1,8 @@
 package beer.catalog.api.domain.model;
 
 
-public record Beer (Integer id, String name, double ABV, String type, String Description, Manufacturer manufacturer){
+public record Beer (Long id, String name, double ABV, String type, String description, Manufacturer manufacturer){
     public Beer{
-        if(id < 0){
-            throw new IllegalArgumentException("Id is mandatory field");
-        }
         if(ABV > 100 || ABV < 0) {
             throw new IllegalArgumentException("ABV value should be a percentage");
         }

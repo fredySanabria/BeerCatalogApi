@@ -9,7 +9,6 @@ import beer.catalog.api.infrastructure.persistence.adapter.ManufacturerRepositor
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ManufacturerService implements IManufacturerUseCases {
@@ -26,13 +25,16 @@ public class ManufacturerService implements IManufacturerUseCases {
 
     @Override
     public Manufacturer updateManufacturer(Long id, String name, String country) {
-        return persistenceAdapter.updateManufacturer(new Manufacturer(id, name, country));
+        Manufacturer existingManufacturer = persistenceAdapter.getManufacturer(id)
+                .orElseThrow(() -> new ManufacturerNotFoundException(id.toString()));
+        return persistenceAdapter.updateManufacturer(new Manufacturer(existingManufacturer.id(), name, country));
     }
 
     @Override
     public void deleteManufacturer(Long id) {
-        Optional<Manufacturer> manufacturer = persistenceAdapter.getManufacturer(id);
-        manufacturer.ifPresent(persistenceAdapter::deleteManufacturer);
+        Manufacturer manufacturer = persistenceAdapter.getManufacturer(id)
+                .orElseThrow(() -> new ManufacturerNotFoundException(id.toString()));
+        persistenceAdapter.deleteManufacturer(manufacturer);
     }
 
     @Override
@@ -42,10 +44,8 @@ public class ManufacturerService implements IManufacturerUseCases {
 
     @Override
     public Manufacturer getManufacturer(Long id) throws ManufacturerNotFoundException {
-        if(persistenceAdapter.getManufacturer(id).isPresent()){
-            return persistenceAdapter.getManufacturer(id).get();
-        }else {
-            throw new ManufacturerNotFoundException(id.toString());
-        }
+        return persistenceAdapter.getManufacturer(id)
+                .orElseThrow(() -> new ManufacturerNotFoundException(id.toString()));
     }
+
 }

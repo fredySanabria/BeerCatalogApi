@@ -17,18 +17,18 @@ class BeerTest {
 
     @Test
     void CreateValidBeer_Successfully(){
-        Beer myTestBeer = new Beer(1,"Perfect Larger",4.5,"larger","Beer description", beerManufacturer);
+        Beer myTestBeer = new Beer(1L,"Perfect Larger",4.5,"larger","Beer description", beerManufacturer);
         assertEquals("Perfect Larger", myTestBeer.name());
         assertEquals("Paulander",myTestBeer.manufacturer().name());
     }
 
     @Test
     void CreateBeerWithoutManufacturer_ThrowsException(){
-        assertThrows(IllegalArgumentException.class, () -> new Beer(1,"Perfect Larger",4.5,"larger","Beer description", null));
+        assertThrows(IllegalArgumentException.class, () -> new Beer(1L,"Perfect Larger",4.5,"larger","Beer description", null));
     }
 
     @Test
     void CreateBeerWithoutValidABV_ThrowsException(){
-        assertThrows(IllegalArgumentException.class, () -> new Beer(1,"Perfect Larger",-114.5,"larger","Beer description", beerManufacturer));
+        assertThrows(IllegalArgumentException.class, () -> new Beer(1L,"Perfect Larger",-114.5,"larger","Beer description", beerManufacturer));
     }
 }
