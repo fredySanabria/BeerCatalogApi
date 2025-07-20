@@ -1,4 +1,14 @@
 package beer.catalog.api.infrastructure.web.dto;
 
-public record ManufacturerDTO (Long id, String name, String country) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
+public record ManufacturerDTO (
+        Long id,
+        @NotBlank(message = "Name can't be empty")
+        @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$", message = "The name can only contain letters and spaces")
+        String name,
+        @NotBlank(message = "Name can't be empty")
+        @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$", message = "The country can only contain letters and spaces")
+        String country) {
 }

@@ -31,4 +31,9 @@ class BeerTest {
     void CreateBeerWithoutValidABV_ThrowsException(){
         assertThrows(IllegalArgumentException.class, () -> new Beer(1L,"Perfect Larger",-114.5,"larger","Beer description", beerManufacturer));
     }
+
+    @Test
+    void CreateBeerWithoutName_ThrowsException(){
+        assertThrows(IllegalArgumentException.class, () -> new Beer(1L,null,4.5,"larger","Beer description", beerManufacturer));
+    }
 }

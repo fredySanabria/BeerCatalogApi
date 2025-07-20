@@ -5,6 +5,7 @@ import beer.catalog.api.domain.model.Manufacturer;
 import beer.catalog.api.infrastructure.web.dto.CreateManufacturerDTO;
 import beer.catalog.api.infrastructure.web.dto.ManufacturerDTO;
 import beer.catalog.api.infrastructure.web.mapper.ManufacturerMapper;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class ManufacturerWebController {
     }
 
     @PostMapping
-    public ResponseEntity<ManufacturerDTO> createManufacturer(@RequestBody CreateManufacturerDTO dtoRequest){
+    public ResponseEntity<ManufacturerDTO> createManufacturer(@RequestBody @Valid CreateManufacturerDTO dtoRequest){
         Manufacturer created = service.createManufacturer(dtoRequest.name(), dtoRequest.country());
         return ResponseEntity.status(HttpStatus.CREATED).body(ManufacturerMapper.toDto(created));
     }
@@ -43,7 +44,7 @@ public class ManufacturerWebController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ManufacturerDTO> updateManufacturer(@PathVariable Long id,@RequestBody ManufacturerDTO updateManufacturer){
+    public ResponseEntity<ManufacturerDTO> updateManufacturer(@PathVariable Long id,@RequestBody @Valid ManufacturerDTO updateManufacturer){
         if(Objects.equals(id, updateManufacturer.id())){
             Manufacturer updatedManufacturer = service.updateManufacturer(updateManufacturer.id(), updateManufacturer.name(), updateManufacturer.country());
             return ResponseEntity.ok(ManufacturerMapper.toDto(updatedManufacturer));

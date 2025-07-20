@@ -5,11 +5,14 @@ import beer.catalog.api.domain.model.Beer;
 import beer.catalog.api.infrastructure.web.dto.CreateBeerDTO;
 import beer.catalog.api.infrastructure.web.dto.BeerDTO;
 import beer.catalog.api.infrastructure.web.mapper.BeerMapper;
+import jakarta.annotation.PostConstruct;
+import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 

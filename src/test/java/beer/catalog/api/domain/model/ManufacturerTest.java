@@ -18,8 +18,10 @@ public class ManufacturerTest {
     void CreateManufacturerWithoutName_ThrowsException(){
         assertThrows(IllegalArgumentException.class,() -> new Manufacturer(2L,null, "España"));
     }
+
     @Test
-    void CreateManufacturerWithoutId_ThrowsException(){
-        assertThrows(IllegalArgumentException.class,() -> new Manufacturer(null,"Moritz", "España"));
+    void CreateManufacturerWithoutCountry_ThrowsException(){
+        assertThrows(IllegalArgumentException.class,() -> new Manufacturer(2L,"Test Name", null));
     }
+
 }
