@@ -114,6 +114,7 @@ docker build -t beercatalog-api:0.0.1-SNAPSHOT .
 ```
 
 ### Minikube Setup
+For security reasons I decide don't upload secret YAMl file creation 
 
 ```bash
 minikube start

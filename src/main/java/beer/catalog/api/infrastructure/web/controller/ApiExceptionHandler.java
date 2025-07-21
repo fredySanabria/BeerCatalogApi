@@ -3,6 +3,7 @@ package beer.catalog.api.infrastructure.web.controller;
 
 import beer.catalog.api.domain.exceptions.BeerNotFoundException;
 import beer.catalog.api.domain.exceptions.ManufacturerNotFoundException;
+import beer.catalog.api.domain.exceptions.NoAccessAuthorizationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -53,6 +54,12 @@ public class ApiExceptionHandler {
         return Map.of("message", "Referential integrity constraint violation. First you need to delete the Beers associated with this Manufacturer");
     }
 
+
+    @ExceptionHandler(NoAccessAuthorizationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, Object> handleAuthorizationValidation(NoAccessAuthorizationException ex) {
+        return Map.of("message", "Your user doesn't have permissions to perform this operation");
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

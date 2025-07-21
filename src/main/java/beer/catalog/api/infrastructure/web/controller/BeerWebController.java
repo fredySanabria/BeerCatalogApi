@@ -2,17 +2,16 @@ package beer.catalog.api.infrastructure.web.controller;
 
 import beer.catalog.api.application.services.beer.BeerService;
 import beer.catalog.api.domain.model.Beer;
+import beer.catalog.api.domain.port.in.IBeerUseCases;
 import beer.catalog.api.infrastructure.web.dto.CreateBeerDTO;
 import beer.catalog.api.infrastructure.web.dto.BeerDTO;
 import beer.catalog.api.infrastructure.web.mapper.BeerMapper;
-import jakarta.annotation.PostConstruct;
-import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,12 +19,13 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/beers")
 public class BeerWebController {
-    private final BeerService service;
+    private final IBeerUseCases service;
 
     public BeerWebController(BeerService service) {
         this.service = service;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANUFACTURER')")
     @PostMapping
     public ResponseEntity<BeerDTO> createBeer(@RequestBody CreateBeerDTO dtoRequest){
         Beer created = service.createBeer(
@@ -37,11 +37,13 @@ public class BeerWebController {
         return ResponseEntity.status(HttpStatus.CREATED).body(BeerMapper.toDto(created));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ResponseEntity<BeerDTO> getBeer(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(BeerMapper.toDto(service.getBeer(id)));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping
     public ResponseEntity<List<BeerDTO>> listBeers(){
         List<BeerDTO> BeersList = service.getAllBeers().stream()
@@ -50,6 +52,7 @@ public class BeerWebController {
         return ResponseEntity.ok(BeersList);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANUFACTURER')")
     @PutMapping("/{id}")
     public ResponseEntity<BeerDTO> updateBeer(@PathVariable Long id,@RequestBody BeerDTO updateBeer){
         if(Objects.equals(id, updateBeer.id())){
@@ -67,6 +70,7 @@ public class BeerWebController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBeer (@PathVariable Long id) {
         service.deleteBeer(id);

@@ -1,13 +1,14 @@
 package beer.catalog.api.infrastructure.web.controller;
 
-import beer.catalog.api.application.services.manufacturer.ManufacturerService;
 import beer.catalog.api.domain.model.Manufacturer;
+import beer.catalog.api.domain.port.in.IManufacturerUseCases;
 import beer.catalog.api.infrastructure.web.dto.CreateManufacturerDTO;
 import beer.catalog.api.infrastructure.web.dto.ManufacturerDTO;
 import beer.catalog.api.infrastructure.web.mapper.ManufacturerMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,23 +19,26 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/manufacturers")
 public class ManufacturerWebController {
-    private final ManufacturerService service;
+    private final IManufacturerUseCases service;
 
-    public ManufacturerWebController(ManufacturerService service) {
+    public ManufacturerWebController(IManufacturerUseCases service) {
         this.service = service;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANUFACTURER')")
     @PostMapping
     public ResponseEntity<ManufacturerDTO> createManufacturer(@RequestBody @Valid CreateManufacturerDTO dtoRequest){
         Manufacturer created = service.createManufacturer(dtoRequest.name(), dtoRequest.country());
         return ResponseEntity.status(HttpStatus.CREATED).body(ManufacturerMapper.toDto(created));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ResponseEntity<ManufacturerDTO> getManufacturer(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(ManufacturerMapper.toDto(service.getManufacturer(id)));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping
     public ResponseEntity<List<ManufacturerDTO>> listManufacturers(){
         List<ManufacturerDTO> manufacturersList = service.getAllManufacturers().stream()
@@ -43,6 +47,8 @@ public class ManufacturerWebController {
         return ResponseEntity.ok(manufacturersList);
     }
 
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANUFACTURER')")
     @PutMapping("/{id}")
     public ResponseEntity<ManufacturerDTO> updateManufacturer(@PathVariable Long id,@RequestBody @Valid ManufacturerDTO updateManufacturer){
         if(Objects.equals(id, updateManufacturer.id())){
@@ -54,6 +60,7 @@ public class ManufacturerWebController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteManufacturer (@PathVariable Long id) {
         service.deleteManufacturer(id);

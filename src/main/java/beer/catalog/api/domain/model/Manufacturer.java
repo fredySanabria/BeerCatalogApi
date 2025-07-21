@@ -9,4 +9,8 @@ public record Manufacturer (Long id, String name, String country ) {
             throw new IllegalArgumentException("Manufacturer name is mandatory field");
         }
     }
+
+    public boolean belongsTo(Long manufacturerId) {
+        return this.id().equals(manufacturerId);
+    }
 }
