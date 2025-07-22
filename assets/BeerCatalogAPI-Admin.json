@@ -1,0 +1,412 @@
+{
+	"info": {
+		"_postman_id": "912520d3-cf12-4fea-8c28-5ffb865638b3",
+		"name": "BeerCatalogAPI -Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46881027",
+		"_collection_link": "https://fredysanabria-7115609.postman.co/workspace/Fredy-Sanabria's-Workspace~7a18a605-967b-4ea7-8dd8-a300849397b5/collection/46881027-912520d3-cf12-4fea-8c28-5ffb865638b3?action=share&source=collection_link&creator=46881027"
+	},
+	"item": [
+		{
+			"name": "ListManufacturers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/manufacturers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"manufacturers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListManufacturers with filters",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/manufacturers?/api/manufacturers?page=0&size=10&sort=name,desc",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"manufacturers"
+					],
+					"query": [
+						{
+							"key": "/api/manufacturers?page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sort",
+							"value": "name,desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListBeers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/beers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"beers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListBeers with filters",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/beers?ABVMin=4.5&ABVMax=6.0&page=0&size=10&sort=ABV,asc",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"beers"
+					],
+					"query": [
+						{
+							"key": "ABVMin",
+							"value": "4.5"
+						},
+						{
+							"key": "ABVMax",
+							"value": "6.0"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sort",
+							"value": "ABV,asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetBeer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/beers/3",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"beers",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetOneManufacturer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/manufacturers/4",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"manufacturers",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteBeer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{assword}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{AdminUser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/beers/2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"beers",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteManufacturer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{assword}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{AdminUser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/manufacturers/4",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"manufacturers",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateManufacturer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{assword}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{AdminUser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"ErdingerWeibru\",\r\n  \"country\": \"Germany\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/manufacturers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"manufacturers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateBeer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{assword}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{AdminUser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Turia\",\r\n  \"ABV\": 4.5,\r\n  \"type\": \"Roast\",\r\n  \"description\": \"Cerveza tostada\",\r\n  \"idManufacturer\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/beers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"beers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateBeer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{assword}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{AdminUser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"id\" : 5,\r\n  \"name\": \"Aguila cero grande\",\r\n  \"ABV\": 0.9,\r\n  \"type\": \"ligth\",\r\n  \"description\": \"Cerveza tostada\",\r\n  \"idManufacturer\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/beers/5",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"beers",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateManufacturer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{assword}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{AdminUser}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 5,\r\n  \"name\": \"budweiser\",\r\n  \"country\": \"Germany\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/manufacturers/5",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"manufacturers",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:8080",
+			"type": "default"
+		},
+		{
+			"key": "AdminUser",
+			"value": "TechnicalUser",
+			"type": "default"
+		},
+		{
+			"key": "assword",
+			"value": "admin",
+			"type": "default"
+		}
+	]
+}

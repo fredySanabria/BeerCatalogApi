@@ -10,8 +10,8 @@
 	</parent>
 	<groupId>beer.catalog</groupId>
 	<artifactId>api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>api</name>
+	<version>1.0.0</version>
+	<name>catalogApi</name>
 	<description>Api for Beer catalog</description>
 	<url/>
 	<licenses>

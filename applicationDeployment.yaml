@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: api:0.0.1-SNAPSHOT
+          image: api:1.0.0
           ports:
             - containerPort: 8080
           env:
