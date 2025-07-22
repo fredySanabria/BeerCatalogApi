@@ -15,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -23,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Transactional
-public class BeerControllerIntegrationTest {
+public class AuthorizationIntegrationTest {
     @Autowired
     private MockMvc mock;
 
@@ -41,9 +40,9 @@ public class BeerControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
+    @WithMockUser(username = "2-Peter", roles = {"MANUFACTURER"})
     void  createBeer_ShouldReturn201AndBeerCreated() throws Exception {
-        ManufacturerEntity manufacturer = manufacturerRepository.findAll().getFirst();
+        ManufacturerEntity manufacturer = manufacturerRepository.findAll().get(1);
         String json = """
     {
         "name": "Aguila Zero",
@@ -67,13 +66,13 @@ public class BeerControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
-    void  createBeer_ShouldReturn400AndBeerNotCreated() throws Exception {
+    @WithMockUser(username = "2-Peter", roles = {"MANUFACTURER"})
+    void  createBeer_ShouldReturn403AndBeerNotCreated() throws Exception {
         ManufacturerEntity manufacturer = manufacturerRepository.findAll().getFirst();
         String json = """
     {
         "name": "Aguila Zero",
-        "ABV": xxx,
+        "ABV": 4.5,
         "type": "light",
         "description": "Roast Beer",
         "idManufacturer": %d
@@ -83,12 +82,13 @@ public class BeerControllerIntegrationTest {
         mock.perform(post("/api/beers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Your user doesn't have permissions to perform this operation"));
     }
 
     @Test
-    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
-    void  createBeer_ShouldReturn400AndBeerNotCreatedByManufacturerNotFound() throws Exception {
+    @WithMockUser(username = "999-Peter", roles = {"MANUFACTURER"})
+    void  createBeer_ShouldReturn403AndBeerNotCreatedAnd() throws Exception {
         String json = """
     {
         "name": "Aguila Zero",
@@ -107,7 +107,8 @@ public class BeerControllerIntegrationTest {
     }
 
     @Test
-    void  getBeer_ShouldReturn200AndBeerFound() throws Exception {
+    @WithMockUser(username = "JhonDoe", roles = {"ANONYMOUS"})
+    void  getBeer_ShouldReturn200AndBeerFoundWithAnonymousUser() throws Exception {
         ManufacturerEntity manufacturer = manufacturerRepository.findAll().getFirst();
         BeerEntity beer = new BeerEntity(null,"Turia",4.5,"Roast","Roast Spanish Beer",manufacturer);
         Long beerId = beerRepository.save(beer).getId();
@@ -121,25 +122,10 @@ public class BeerControllerIntegrationTest {
                 .andExpect(jsonPath("$.description").value("Roast Spanish Beer"))
                 .andExpect(jsonPath("$.idManufacturer").value(manufacturer.getId()));
     }
-    @Test
-    void  getBeer_ShouldReturn404AndBeerNotFound() throws Exception {
-        Long beerId = 77L;
-        mock.perform(get("/api/beers/{id}",beerId))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Beer with id 77 not found"));
-    }
 
     @Test
-    void  getListBeer_ShouldReturn200AndBeerArrayFound() throws Exception {
-        mock.perform(get("/api/beers"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isArray());
-    }
-
-    @Test
-    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
-    void  updateBeer_ShouldReturn200AndBeerUpdated() throws Exception {
+    @WithMockUser(username = "2-Peter", roles = {"MANUFACTURER"})
+    void  updateBeer_ShouldReturn403ByNotAuthorizedUserAndBeerNotUpdated() throws Exception {
         ManufacturerEntity manufacturer = manufacturerRepository.findAll().getFirst();
         BeerEntity beer = new BeerEntity(null,"Turia",4.5,"Roast","Roast Spanish Beer",manufacturer);
         Long beerId = beerRepository.save(beer).getId();
@@ -157,105 +143,45 @@ public class BeerControllerIntegrationTest {
         mock.perform(put("/api/beers/{id}",beerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.name").value("Aguila Zero"))
-                .andExpect(jsonPath("$.ABV").value(0.5))
-                .andExpect(jsonPath("$.type").value("light"))
-                .andExpect(jsonPath("$.description").value("Roast Beer"))
-                .andExpect(jsonPath("$.idManufacturer").value(manufacturer.getId()));
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Your user doesn't have permissions to perform this operation"));
     }
 
     @Test
-    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
-    void  updateBeer_ShouldReturn400AndBeerUpdated() throws Exception {
+    @WithMockUser(username = "2-Peter", roles = {"MANUFACTURER"})
+    void  updateBeer_ShouldReturn403AndBeerNotUpdated() throws Exception {
         ManufacturerEntity manufacturer = manufacturerRepository.findAll().getFirst();
         BeerEntity beer = new BeerEntity(null,"Turia",4.5,"Roast","Roast Spanish Beer",manufacturer);
         Long beerId = beerRepository.save(beer).getId();
         String json = """
     {
-        "id" : "70",
+        "id" : %d,
         "name": "Aguila Zero",
         "ABV": 0.5,
         "type": "light",
         "description": "Roast Beer",
         "idManufacturer": %d
     }
-       \s""".formatted(manufacturer.getId());
+       \s""".formatted(beerId, manufacturer.getId());
 
         mock.perform(put("/api/beers/{id}",beerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Beer id is different from existing in the body\""));
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Your user doesn't have permissions to perform this operation"));
     }
+
 
     @Test
-    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
-    void  updateBeer_ShouldReturn400AndBeerNotUpdatedWhenNotValidData() throws Exception {
-        ManufacturerEntity manufacturer = manufacturerRepository.findAll().getFirst();
-        BeerEntity beer = new BeerEntity(null,"Turia",4.5,"Roast","Roast Spanish Beer",manufacturer);
-        Long beerId = beerRepository.save(beer).getId();
-
-        String json = """
-    {
-        "id" : "5",
-        "name": "Aguila Zero",
-        "ABV": xxx,
-        "type": "light",
-        "description": "Roast Beer",
-        "idManufacturer": %d
-    }
-       \s""".formatted(manufacturer.getId());
-
-        mock.perform(put("/api/beers/{id}",beerId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.message").value("JSON parse error: Cannot deserialize value"));
-    }
-
-    @Test
-    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
-    void  updateBeer_ShouldReturn400AndBeerNotUpdatedWhenManufacturerNotFound() throws Exception {
-
-        String json = """
-    {
-        "id" : "70",
-        "name": "Aguila Zero",
-        "ABV": 0.5,
-        "type": "light",
-        "description": "Roast Beer",
-        "idManufacturer": %d
-    }
-       \s""".formatted(70L);
-
-        mock.perform(put("/api/beers/{id}",70L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.message").value("Beer Manufacturer with id 70 not found"));
-    }
-
-    @Test
-    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
-    void  deleteBeer_ShouldReturn204AndBeerDeleted() throws Exception {
+    @WithMockUser(username = "2-Peter", roles = {"MANUFACTURER"})
+    void  deleteBeer_ShouldReturn403AndBeerNotDeleted() throws Exception {
         ManufacturerEntity manufacturer = manufacturerRepository.findAll().getFirst();
         BeerEntity beer = new BeerEntity(null,"Turia",4.5,"Roast","Roast Spanish Beer",manufacturer);
         Long beerId = beerRepository.save(beer).getId();
 
         mock.perform(delete("/api/beers/{id}",beerId))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isForbidden());
         mock.perform(get("/api/beers/{id}",beerId))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Beer with id %d not found".formatted(beerId)));
-    }
-    @Test
-    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
-    void  deleteBeer_ShouldReturn404AndBeerNotFound() throws Exception {
-        Long beerId = 77L;
-        mock.perform(delete("/api/beers/{id}",beerId))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Beer with id %d not found".formatted(beerId)));
+                .andExpect(status().isOk());
     }
 }

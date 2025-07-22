@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class ManufacturerControllerIntegrationTest {
 
 
     @Test
+    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
     void  createManufacturer_ShouldReturn201AndManufacturerCreated() throws Exception {
         String json = """
     {
@@ -44,6 +46,7 @@ public class ManufacturerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
     void  createManufacturer_ShouldReturn400AndManufacturerNotCreated() throws Exception {
         String json = """
     {
@@ -74,10 +77,10 @@ public class ManufacturerControllerIntegrationTest {
     }
     @Test
     void  getManufacturer_ShouldReturn404AndManufacturerNotFound() throws Exception {
-        Long manufacturerId = 7L;
+        Long manufacturerId = 77L;
         mock.perform(get("/api/manufacturers/{id}",manufacturerId))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Beer Manufacturer with id 7 not found"));
+                .andExpect(jsonPath("$.message").value("Beer Manufacturer with id 77 not found"));
     }
 
     @Test
@@ -89,6 +92,7 @@ public class ManufacturerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
     void  updateManufacturer_ShouldReturn200AndManufacturerUpdated() throws Exception {
         ManufacturerEntity Manufacturer = new ManufacturerEntity(null,"Artisanal Manufacturer","local update");
         Long manufacturerId = manufacturerRepository.save(Manufacturer).getId();
@@ -110,6 +114,7 @@ public class ManufacturerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
     void  updateManufacturer_ShouldReturn400AndManufacturerUpdated() throws Exception {
         ManufacturerEntity Manufacturer = new ManufacturerEntity(null,"Artisanal Manufacturer","local update");
         Long manufacturerId = manufacturerRepository.save(Manufacturer).getId();
@@ -129,6 +134,7 @@ public class ManufacturerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
     void  updateManufacturer_ShouldReturn400AndManufacturerNotUpdatedWhenNotValidData() throws Exception {
         ManufacturerEntity Manufacturer = new ManufacturerEntity(null,"Artisanal Manufacturer","local update");
         Long manufacturerId = manufacturerRepository.save(Manufacturer).getId();
@@ -151,6 +157,7 @@ public class ManufacturerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
     void  updateManufacturer_ShouldReturn400AndManufacturerNotUpdatedWhenManufacturerNotFound() throws Exception {
 
         String json = """
@@ -169,6 +176,7 @@ public class ManufacturerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
     void  deleteManufacturer_ShouldReturn204AndManufacturerDeleted() throws Exception {
         ManufacturerEntity manufacturer = new ManufacturerEntity(null,"Artisanal Manufacturer","local delete");
         Long manufacturerId = manufacturerRepository.save(manufacturer).getId();
@@ -180,6 +188,7 @@ public class ManufacturerControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Beer Manufacturer with id %d not found".formatted(manufacturerId)));
     }
     @Test
+    @WithMockUser(username = "TechnicalUser", roles = {"ADMIN"})
     void  deleteManufacturer_ShouldReturn404AndManufacturerNotFound() throws Exception {
         Long manufacturerId = 77L;
         mock.perform(delete("/api/manufacturers/{id}",manufacturerId))

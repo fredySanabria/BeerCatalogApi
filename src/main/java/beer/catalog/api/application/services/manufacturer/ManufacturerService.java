@@ -6,8 +6,10 @@ import beer.catalog.api.application.services.security.AuthorizationService;
 import beer.catalog.api.domain.exceptions.ManufacturerNotFoundException;
 import beer.catalog.api.domain.exceptions.NoAccessAuthorizationException;
 import beer.catalog.api.domain.model.Manufacturer;
+import beer.catalog.api.domain.model.ManufacturerSearchCriteria;
 import beer.catalog.api.domain.port.in.IManufacturerUseCases;
 import beer.catalog.api.domain.port.out.IManufacturerCRUDRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -50,9 +52,15 @@ public class ManufacturerService implements IManufacturerUseCases {
     }
 
     @Override
-    public List<Manufacturer> getAllManufacturers() {
-        return repository.getAllManufacturers();
+    public List<Manufacturer> getAllManufacturers(Pageable pageable) {
+        return repository.getAllManufacturers(pageable);
     }
+
+    @Override
+    public List<Manufacturer> getAllManufacturers(ManufacturerSearchCriteria criteria, Pageable pageable) {
+        return repository.getAllManufacturers(criteria, pageable);
+    }
+
 
     @Override
     public Manufacturer getManufacturer(Long id) throws ManufacturerNotFoundException {

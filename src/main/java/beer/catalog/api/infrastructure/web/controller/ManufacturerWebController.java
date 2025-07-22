@@ -1,11 +1,13 @@
 package beer.catalog.api.infrastructure.web.controller;
 
 import beer.catalog.api.domain.model.Manufacturer;
+import beer.catalog.api.domain.model.ManufacturerSearchCriteria;
 import beer.catalog.api.domain.port.in.IManufacturerUseCases;
 import beer.catalog.api.infrastructure.web.dto.CreateManufacturerDTO;
 import beer.catalog.api.infrastructure.web.dto.ManufacturerDTO;
 import beer.catalog.api.infrastructure.web.mapper.ManufacturerMapper;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,8 +42,14 @@ public class ManufacturerWebController {
 
     @PreAuthorize("permitAll()")
     @GetMapping
-    public ResponseEntity<List<ManufacturerDTO>> listManufacturers(){
-        List<ManufacturerDTO> manufacturersList = service.getAllManufacturers().stream()
+    public ResponseEntity<List<ManufacturerDTO>> listManufacturers(ManufacturerSearchCriteria criteria, Pageable pageable){
+        List<Manufacturer> manufacturers;
+        if(criteria.isEmpty()){
+            manufacturers = service.getAllManufacturers(pageable);
+        } else{
+            manufacturers = service.getAllManufacturers(criteria, pageable);
+        }
+        List<ManufacturerDTO> manufacturersList = manufacturers.stream()
                 .map(ManufacturerMapper::toDto)
                 .toList();
         return ResponseEntity.ok(manufacturersList);

@@ -4,10 +4,12 @@ import beer.catalog.api.application.services.security.AuthorizationService;
 import beer.catalog.api.domain.exceptions.BeerNotFoundException;
 import beer.catalog.api.domain.exceptions.ManufacturerNotFoundException;
 import beer.catalog.api.domain.model.Beer;
+import beer.catalog.api.domain.model.BeerSearchCriteria;
 import beer.catalog.api.domain.model.Manufacturer;
 import beer.catalog.api.domain.port.in.IBeerUseCases;
 import beer.catalog.api.domain.port.out.IBeerCRUDRepository;
 import beer.catalog.api.domain.port.out.IManufacturerCRUDRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,8 +55,13 @@ public class BeerService implements IBeerUseCases {
     }
 
     @Override
-    public List<Beer> getAllBeers() {
-        return repository.getAllBeers();
+    public List<Beer> getAllBeers(Pageable pageable) {
+        return repository.getAllBeers(pageable);
+    }
+
+    @Override
+    public List<Beer> getAllBeers(BeerSearchCriteria criteria, Pageable pageable) {
+        return repository.getBeersByFilter(criteria, pageable);
     }
 
     @Override

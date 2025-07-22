@@ -1,10 +1,14 @@
 package beer.catalog.api.infrastructure.persistence.adapter;
 
 import beer.catalog.api.domain.model.Beer;
+import beer.catalog.api.domain.model.BeerSearchCriteria;
 import beer.catalog.api.domain.port.out.IBeerCRUDRepository;
 import beer.catalog.api.infrastructure.persistence.entity.BeerEntity;
 import beer.catalog.api.infrastructure.persistence.mapper.BeerMapper;
 import beer.catalog.api.infrastructure.persistence.repository.BeerJPARepository;
+import beer.catalog.api.infrastructure.persistence.specification.BeerSpecification;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,8 +41,8 @@ public class BeerRepositoryAdapter implements IBeerCRUDRepository {
     }
 
     @Override
-    public List<Beer> getAllBeers() {
-        return repository.findAll().stream()
+    public List<Beer> getAllBeers(Pageable pageable) {
+        return repository.findAll(pageable).stream()
                 .map(BeerMapper::toDomain)
                 .toList();
     }
@@ -47,4 +51,17 @@ public class BeerRepositoryAdapter implements IBeerCRUDRepository {
     public Optional<Beer> getBeer(Long id) {
         return repository.findById(id).map(BeerMapper::toDomain);
     }
+
+    @Override
+    public List<Beer> getBeersByFilter(BeerSearchCriteria criteria, Pageable pageable) {
+        Specification<BeerEntity> spec = BeerSpecification.nameContains(criteria.name())
+                .and(BeerSpecification.typeEquals(criteria.type()))
+                .and(BeerSpecification.countryEquals(criteria.country()))
+                .and(BeerSpecification.descriptionContains(criteria.description()))
+                .and(BeerSpecification.abvBetween(criteria.ABVMin(), criteria.ABVMax()));
+        return repository.findAll(spec, pageable)
+                .map(BeerMapper::toDomain)
+                .toList();
+    }
+
 }

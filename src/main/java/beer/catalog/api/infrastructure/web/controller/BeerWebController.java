@@ -3,9 +3,11 @@ package beer.catalog.api.infrastructure.web.controller;
 import beer.catalog.api.application.services.beer.BeerService;
 import beer.catalog.api.domain.model.Beer;
 import beer.catalog.api.domain.port.in.IBeerUseCases;
+import beer.catalog.api.domain.model.BeerSearchCriteria;
 import beer.catalog.api.infrastructure.web.dto.CreateBeerDTO;
 import beer.catalog.api.infrastructure.web.dto.BeerDTO;
 import beer.catalog.api.infrastructure.web.mapper.BeerMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,11 +47,17 @@ public class BeerWebController {
 
     @PreAuthorize("permitAll()")
     @GetMapping
-    public ResponseEntity<List<BeerDTO>> listBeers(){
-        List<BeerDTO> BeersList = service.getAllBeers().stream()
+    public ResponseEntity<List<BeerDTO>> listBeers(BeerSearchCriteria criteria, Pageable pageable){
+        List<Beer> beersList;
+        if (criteria.isEmpty()){
+            beersList = service.getAllBeers(pageable);
+        }else{
+            beersList = service.getAllBeers(criteria, pageable);
+        }
+        return ResponseEntity.ok(
+                beersList.stream()
                 .map(BeerMapper::toDto)
-                .toList();
-        return ResponseEntity.ok(BeersList);
+                .toList());
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANUFACTURER')")

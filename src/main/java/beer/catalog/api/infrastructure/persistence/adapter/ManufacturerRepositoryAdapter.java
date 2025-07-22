@@ -2,11 +2,16 @@ package beer.catalog.api.infrastructure.persistence.adapter;
 
 
 
+
 import beer.catalog.api.domain.model.Manufacturer;
+import beer.catalog.api.domain.model.ManufacturerSearchCriteria;
 import beer.catalog.api.domain.port.out.IManufacturerCRUDRepository;
 import beer.catalog.api.infrastructure.persistence.entity.ManufacturerEntity;
 import beer.catalog.api.infrastructure.persistence.mapper.ManufacturerMapper;
 import beer.catalog.api.infrastructure.persistence.repository.ManufacturerJPARepository;
+import beer.catalog.api.infrastructure.persistence.specification.ManufacturerSpecification;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -43,8 +48,17 @@ public class ManufacturerRepositoryAdapter implements IManufacturerCRUDRepositor
     }
 
     @Override
-    public List<Manufacturer> getAllManufacturers() {
-        return repository.findAll().stream()
+    public List<Manufacturer> getAllManufacturers(Pageable pageable) {
+        return repository.findAll(pageable).stream()
+                .map(ManufacturerMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Manufacturer> getAllManufacturers(ManufacturerSearchCriteria criteria, Pageable pageable) {
+        Specification<ManufacturerEntity> spec = ManufacturerSpecification.nameContains(criteria.name())
+                .and(ManufacturerSpecification.countryEquals(criteria.country()));
+        return repository.findAll(spec,pageable)
                 .map(ManufacturerMapper::toDomain)
                 .toList();
     }
