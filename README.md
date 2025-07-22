@@ -1,12 +1,14 @@
 # BeerCatalog API
 
-This project is a Java 21 RESTful API for managing products and manufacturers, built using Spring Boot 3.5.4 and designed with a clean, maintainable Hexagonal Architecture (Ports and Adapters).
+This project is a Java 21 RESTful API for managing beers and manufacturers, built using Spring Boot 3.5.4 and designed with a clean, maintainable Hexagonal Architecture (Ports and Adapters).
 
-## 🚀 Main Technologies
+## 💾 Main Technologies
 
 - Java 21
 - Spring Boot 3.5.4
 - Spring MVC
+- Spring Security
+- Criteria API
 - JPA & Hibernate
 - H2 / PostgreSQL (configurable)
 - Docker & Kubernetes (Minikube compatible)
@@ -14,11 +16,11 @@ This project is a Java 21 RESTful API for managing products and manufacturers, b
 
 ---
 
-## 🧱 Architecture Overview
+## 💻 Architecture Overview
 
 The project follows Hexagonal Architecture:
 
-- **Domain Layer**: Contains core business logic and immutable domain models using Java `record`s.
+- **Domain Layer**: Contains core business logic and immutable domain models using Java `records`.
 - **Application Layer**: Use cases (services) that coordinate business rules.
 - **Ports**: Interfaces for persistence or external systems.
 - **Adapters**:
@@ -44,13 +46,12 @@ src/main/java
 
 ## ✅ Features
 
-- RESTful CRUD for Products and Manufacturers
+- RESTful CRUD for Beers and Manufacturers
 - Domain-driven validation (e.g. manufacturer name must not contain numbers)
 - DTOs and mappers for transport and transformation
-- Optional usage for safe repository queries
 - Global exception handler with structured JSON error responses
-- Swagger UI available for easy testing
-- Kubernetes-ready (with Secrets, ConfigMaps, Ingress, etc.)
+- Swagger UI available for easy testing also Postman Collections added
+- Kubernetes-ready (with Secrets, Service, Deployment, Ingress, etc.)
 
 ---
 
@@ -59,21 +60,24 @@ src/main/java
 > ℹ️ **Note:** This application uses Spring profiles. When running locally, you should activate a profile using JVM options.
 
 ```bash
-git clone https://github.com/your-user/beercatalog-api.git
-cd beercatalog-api
-./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=local"
+git clone https://github.com/fredySanabria/BeerCatalogApi.git
+cd BeerCatalogApi
+./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=test"
 ```
 
-Then go to: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+Then go to: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+OpenAPI docs: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
 ---
 
 ## 🧪 Testing
 
-- Unit tests for domain and use cases
+- Unit tests for domain, use cases
 - Integration tests for controllers using MockMvc
 - Validation and error path tests
-- Code coverage via Jacoco
+- Code coverage via Jacoco 
+
 
 Run tests:
 
@@ -93,13 +97,16 @@ The HTML report will be available at:
 target/site/jacoco/index.html
 ```
 
+![Jacoco execution](/images/jacoco.png)
+
 ---
 
 ## 📬 Postman Collection
 
 A ready-to-use Postman collection is included in the repository:
 
-- `postman/BeerCatalog-API.postman_collection.json`
+- `assets/BeerCatalogAPI-Admin.json`
+- `assets/BeerCatalogAPI-Manufacturer.json`
 
 You can import this into Postman and test all endpoints easily.
 
@@ -107,33 +114,49 @@ You can import this into Postman and test all endpoints easily.
 
 ## ☁️ Docker & Kubernetes
 
-### Docker Build
-
-```bash
-docker build -t beercatalog-api:0.0.1-SNAPSHOT .
-```
+Please follow the deployment instructions in 
+[deployment](deployment.md)
 
 ### Minikube Setup
 For security reasons I decide don't upload secret YAMl file creation 
 
+## ☁️ AWS
+
+To create the postgres instance was necessary to perform the following tasks:
+
+✅ Create VPC
+
+✅ Create 2 public subnets
+
+✅ Create  subnet group
+
+✅ Create security group
+
+✅ Create internet gateway
+
+✅ Create RD5 postgres image
+
+# 🙋 Considerations from the Author 
+
+Thanks in advance to review my code. I really appreciate it.
+
+* Security: I'd used 3 users in memory each with different roles ADMIN, MANUFACTURER, ANONYMOUS. it's important to mention that just created to test proposes. The correct approach should use a strong user repository, authentication and authorization (OAuth2 implementation for example).
+
+* Databases: I create an embed database H2 to run integration test it's necessary to run VM options with this option  
 ```bash
-minikube start
-kubectl apply -f k8s/
-minikube service api-service
+-Dspring.profiles.active=test 
+```
+  for dev purposes I create other profile that run with AWS RD5 postgres database:
+
+```bash
+-Dspring.profiles.active=aws
+```
+* Advance search: you can use different parameters for your search, also sorting, pagination and in the ABV case a range:
+
+```bash
+/api/manufacturers?/api/manufacturers?name=page=0&size=10&sort=name,desc
+/api/beers?ABVMin=4.5&ABVMax=6.0&page=0&size=10&sort=ABV,asc
 ```
 
-### Example Configurations:
-
-- Deployment YAML with profile: `-Dspring.profiles.active=aws`
-- Secrets YAML to inject DB credentials
-- Ingress with host: `beercatalog.local`
-
-Update your `hosts` file:
-
-```bash
-127.0.0.1 beercatalog.local
-```
-
----
 
 
